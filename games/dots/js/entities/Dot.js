@@ -1,6 +1,5 @@
 class Dot {
     #originalFill = null;
-    reserved = false;
     type = 'Dot';
     constructor (x, y, index, fill, R = 3){
         this.x = x;

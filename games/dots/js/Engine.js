@@ -8,16 +8,20 @@ const canvas = new Canvas('#screen', 500, 500);
 
 class Engine {
     cacheItems = [];
-    items = [];
-    snaps = [];
+    dots = [];
+    lines = [];
+    //snaps = [];
     pointA = null;
     pointB = null;
     color = "black";
+    scale = 1;
+    zoomX = 1.2;
     constructor (rows, cols, gap){
         this.rows = rows;
         this.cols = cols;
         this.gap = gap;
     }
+
     mount (){
         // scale
         // abc 134
@@ -28,26 +32,20 @@ class Engine {
         canvas.canvas.addEventListener('click', (event) => {
             const cursor = this.getCursor( event );
             
-            this.items.forEach( (item, index) => {
+            this.dots.forEach( (item, index) => {
                 const { x, y } = item;
-                const obj2 = { x, y, width: 10, height: 10 };
+                const obj2 = { x, y, width: item.R * 2 * this.scale, height: item.R * 2 * this.scale };
                 const isCollide = this.collision(cursor, obj2);
 
                 if(isCollide){
-        
-                    console.log('Должна быть проверка на занятость точки другой линией')
-                    if(item.type==='Dot'){
-                        item.reserved = true
-                    }
                     if(this.pointA===null){
                         this.pointA = { x, y}
                     }
                     else{
                         this.pointB = { x, y }
-                        const line = new Line(this.pointA.x, this.pointA.y, this.pointB.x, this.pointB.y, this.color);
-                        this.items.unshift(line);
-                        this.pointA = null
+                        this.addLine()
                     }
+                    
                    // item.active(canvas.ctx)
                 }
                 else{
@@ -72,12 +70,15 @@ class Engine {
         
     }
     grid (){
-
+        this.dots = [];
         for(let i=1; i<=this.rows; i++){
             for(let j=1; j<=this.cols; j++){
                 let index = i*j;
-                const dot = new Dot( j * this.gap, i * this.gap, index, "black");
-                this.items.push(dot);
+                let x = j * this.gap* this.scale;
+                let y = i * this.gap * this.scale;
+                let R = 3 * this.scale;
+                const dot = new Dot( x, y, index, "black", R);
+                this.dots.push(dot);
             }
 
         }
@@ -85,7 +86,8 @@ class Engine {
     }
     render (){
         canvas.clear()
-        this.items.forEach( (item) => {
+        const shapes = [ ...this.lines, ...this.dots ];
+        shapes.forEach( (item) => {
             item.draw(canvas.ctx)
         })
     }
@@ -96,8 +98,8 @@ class Engine {
         return { 
             x: Math.floor(x), 
             y: Math.floor(y), 
-            width: 5, 
-            height: 5
+            width: 10, 
+            height: 10
         };
     }
     collision(obj1, obj2){
@@ -113,14 +115,40 @@ class Engine {
     resetSnap (){
         this.pointA = null;
     }
-    redo (){
-        this.items.shift();
+    undo (){
+        this.lines.pop();
         this.resetSnap();
+    }
+    addLine (){
+        let lineWidth = 5 * this.scale;
+        const line = new Line(this.pointA.x, this.pointA.y, this.pointB.x, this.pointB.y, this.color, lineWidth);
+        this.lines.push(line);
+        this.pointA = this.pointB;
+    }
+    zoomIn (){
+        this.scale = this.scale * this.zoomX;
+        this.lines = this.lines.map((line) => {
+            line.lineWidth = 5 * this.scale;
+            line.x = line.x * this.zoomX;
+            line.y = line.y * this.zoomX;
+            line.x2 = line.x2 * this.zoomX;
+            line.y2 = line.y2 * this.zoomX;
+            return line;
+        });
+        this.grid();
+    }
+    zoomOut (){
+        this.scale = this.scale / this.zoomX;
+        this.lines = this.lines.map((line) => {
+            line.lineWidth =  line.lineWidth / this.zoomX;
+            line.x = line.x / this.zoomX;
+            line.y = line.y / this.zoomX;
+            line.x2 = line.x2 / this.zoomX;
+            line.y2 = line.y2 / this.zoomX;
+            return line;
+        });
+        this.grid();
     }
 }
 
 export default Engine;
-
-
-  
-// Circle.prototype.touched

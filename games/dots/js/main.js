@@ -4,8 +4,8 @@ import Engine from "./Engine.js";
 
 
 
-const ROWS = 10;
-const COLS = 10;
+const ROWS = 30;
+const COLS = 30;
 const GAP = 40;
 const engine = new Engine(ROWS, COLS, GAP);
 window.engine = engine
@@ -45,6 +45,18 @@ document.querySelector('.tools__reset-snap').addEventListener('click', () => {
 /**
  * redo
  */
- document.querySelector('.tools__redo').addEventListener('click', () => {
-    engine.redo();
+document.querySelector('.tools__undo').addEventListener('click', () => {
+    engine.undo();
 })
+
+/**
+ * zoom
+ */
+document.querySelector('.tools__zoom-in').addEventListener('click', () => {
+    engine.zoomIn();
+})
+document.querySelector('.tools__zoom-out').addEventListener('click', () => {
+    engine.zoomOut();
+})
+
+ 

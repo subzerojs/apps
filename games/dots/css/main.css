@@ -5,14 +5,20 @@ body{
     background-color: #223;
 }
 .game{
-    width: 500px;
+    width: 550px;
+}
+.screen-wrapper{
+    padding: 20px;
+    background-color: gray;
 }
 #screen{
+    border: 1px dashed gray;
     background-color: wheat;
 }
 .controls{
     display: flex;
     justify-content: space-between;
+    padding-top: 15px;
 }
 .colors{
     display: flex;
@@ -43,6 +49,7 @@ body{
     justify-content: center;
     align-items: center;
     font-weight: 700;
+    min-width: 50px;
 }
 .tools__item:hover{
     cursor: pointer;

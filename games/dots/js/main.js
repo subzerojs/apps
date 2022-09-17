@@ -1,4 +1,6 @@
-
+/**
+ * http://www.williammalone.com/articles/html5-canvas-javascript-paint-bucket-tool/
+ */
 import Engine from "./Engine.js";
 
 
@@ -11,19 +13,15 @@ const engine = new Engine(ROWS, COLS, GAP);
 window.engine = engine
 
 engine.mount();
-/*
-const line = new Line(0, 0, 102, 102)
-const line2 = new Line(102, 102, 252, 102)
 
-const dot = new Dot(100, 100);
-const dot2 = new Dot(250, 100);
-*/
-//engine.items = [ line, line2, dot, dot2]
 
 engine.render()
 setInterval(() => {
     engine.render()
 }, 100)
+
+
+//window.requestAnimationFrame(engine.render.bind(engine));
 
 drawColors()
 function drawColors (){
